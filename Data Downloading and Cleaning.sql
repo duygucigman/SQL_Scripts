@@ -3,8 +3,10 @@
 ------------------------------------------------------------------------------------------
 
 
+------------------------------------
+------- DOWNLOADING RAW DATA--------
+------------------------------------
 
--------------------------------- DOWNLOADING RAW DATA---------------------------
 DROP TABLE #XXX
 
 SELECT SURVEY_ID, ACT, STATUS, USER_ID, PROJECT, DATE_TRANSFERRED, SURVEY_DATE, 
@@ -32,11 +34,12 @@ COMMIT -- IF YOU WANT TO COMMIT USE THIS
 ROLLBACK -- IF YOU WANT TO ROLLBACK USE THIS
 
 
---ADDING A REFERENCE FIELD
+---ADDING A REFERENCE FIELD
 ALTER TABLE #XXX ADD REFERENCE INT IDENTITY(1,1)
 
-
----APPLYING DATA CLEANING
+------------------------------------
+-------APPLYING DATA CLEANING-------
+------------------------------------
 
 ---CLEANING THE DUPLICATIONS IF THERE IS ANY IN A MONTH ---
 DROP TABLE DUPLICATIONS
@@ -58,8 +61,15 @@ WHERE SURVEY_ID IN
 DELETE #XXX
 WHERE ACT<>1
 
+---DELETE SURVEYS IF NO AUDITOR INFO
+DELETE #XXX
+WHERE AUDITOR IS NULL
 
---------------UPLOADING RECENT MONTH DATA TO THE MAIN REPORTING TABLE FROM TEMPORARY TABLE--------
+
+------------------------------------
+----------ADDING RECENT MONTH DATA TO THE MAIN REPORTING TABLE FROM TEMPORARY TABLE--------
+------------------------------------
+
 
 INSERT INTO SOURCE_DATA
 SELECT SURVEY_ID, 1 ACTIVE, AUDITOR, PROJECT, DATE_TRANSFERRED, SURVEY_DATE, PERIOD_DAY, PERIOD_ ,NOTE
